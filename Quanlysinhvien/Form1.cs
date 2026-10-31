@@ -230,5 +230,38 @@ namespace Quanlysinhvien
             // 3. Chuyển tiêu điểm về điều khiển txtMaSV
             txtMasv.Focus();
         }
+        private void cboLop_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Kiểm tra xem ComboBox đã có giá trị chọn chưa
+            if (cboLop.SelectedValue != null)
+            {
+                string maLopChon = cboLop.SelectedValue.ToString();
+
+                // Lọc danh sách sinh viên thuộc mã lớp đang chọn
+                var svTheoLop = danhSachSV.Where(s => s.MaLop == maLopChon).ToList();
+
+                // Đưa danh sách đã lọc lên BindingSource để hiển thị ra DataGridView
+                sinhVienBindingSource.DataSource = new BindingList<SinhVien>(svTheoLop);
+                dataGridView1.DataSource = sinhVienBindingSource;
+            }
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Đảm bảo người dùng không bấm nhầm vào thanh tiêu đề (RowIndex = -1)
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+                // Lấy Mã SV từ dòng được chọn gán vào ô txtMasv
+                if (row.Cells["MaSV"].Value != null)
+                {
+                    txtMasv.Text = row.Cells["MaSV"].Value.ToString();
+
+                    // Kích hoạt luôn logic kiểm tra như khi người dùng gõ xong mã và rời chuột (Leave)
+                    EventArgs ev = new EventArgs();
+                    textBox1_Leave(txtMasv, ev);
+                }
+            }
+        }
     }
 }
